@@ -1,15 +1,22 @@
 FROM python:3.11-slim
 
-# Recommended for logging and cleanliness
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+# Create a non-root user and group
+RUN addgroup --system appgroup && adduser --system --group appuser
+
+# Copy requirements and install
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy application code and give ownership to the non-root user
+COPY --chown=appuser:appgroup . .
+
+# Switch to the non-root user
+USER appuser
 
 EXPOSE 8000
 
