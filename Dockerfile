@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install dependencies into an isolated prefix so we can copy them cleanly
-COPY requirements.txt .
+COPY app/requirements.txt .
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # ── Stage 2: runtime ────────────────────────────────────────────────────────
@@ -25,7 +25,7 @@ COPY --from=builder /install /usr/local
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 
 # Copy application source and assign ownership
-COPY --chown=appuser:appgroup . .
+COPY --chown=appuser:appgroup app/ .
 
 # Switch to non-root user
 USER appuser

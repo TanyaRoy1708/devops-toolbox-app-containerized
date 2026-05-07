@@ -50,6 +50,4 @@ networks:
     driver: bridge
 
 volumes:
-  # MySQL data is persisted across restarts via named volume.
-  # Redis data is intentionally ephemeral — resets on 'docker compose down'.
   db_data:
