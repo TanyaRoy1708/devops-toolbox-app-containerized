@@ -1,9 +1,12 @@
 import redis
 import os
 import json
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
@@ -18,9 +21,15 @@ try:
         password=REDIS_PASSWORD,
         decode_responses=True
     )
+    # Eagerly ping to confirm the connection is usable
+    redis_client.ping()
 except Exception as e:
-    print(f"Redis connection error: {e}")
+    logger.warning(
+        "Redis unavailable — cache disabled. App will fall back to direct compute. "
+        "Error: %s", e
+    )
     redis_client = None
+
 
 def get_cache(key: str):
     if not redis_client:

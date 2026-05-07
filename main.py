@@ -31,6 +31,12 @@ app.include_router(cidr.router)
 app.include_router(k8s.router)
 app.include_router(dockerfile_router.router)
 
+@app.get("/health")
+async def health():
+    """Liveness probe — used by ALB target group and Docker HEALTHCHECK."""
+    return {"status": "ok", "service": "devops-toolbox", "version": "1.0.0"}
+
+
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request, db: Session = Depends(get_db)):
     # Get usage counts from DB
